@@ -1,0 +1,305 @@
+# Cursor Rules: Java Spring Boot Backend Training Course
+
+## Cấu trúc File và Tổ chức
+
+### 1. Mỗi Buổi Học là 1 File Riêng
+- **Quy tắc:** Mỗi buổi học phải được lưu trong file riêng biệt
+- **Định dạng tên file:** `Buoi{STT}.md` (ví dụ: `Buoi1.md`, `Buoi2.md`, ..., `Buoi24.md`)
+- **Cấu trúc file buổi học:**
+  ```markdown
+  # Buổi {STT}: {Tên Buổi}
+  
+  ## Kiến thức
+  - [Nội dung kiến thức với ví dụ cụ thể]
+  
+  ## Thực hành
+  - [Bài tập thực hành]
+  
+  ## Dự án Taxi
+  - [Áp dụng vào Taxi Booking System]
+  ```
+
+### 2. Đồng Bộ 2 Chiều với ChuongTrinhDaoTao.md
+- **QUAN TRỌNG:** Luôn đảm bảo đồng bộ giữa `ChuongTrinhDaoTao.md` và các file buổi học
+- **Khi chỉnh sửa file buổi học:**
+  - Phải cập nhật phần tương ứng trong `ChuongTrinhDaoTao.md`
+  - Giữ nguyên cấu trúc và format của `ChuongTrinhDaoTao.md`
+  - Đảm bảo số thứ tự buổi học khớp nhau
+  
+- **Khi chỉnh sửa ChuongTrinhDaoTao.md:**
+  - Phải cập nhật file buổi học tương ứng
+  - Nếu thêm/xóa/sửa nội dung buổi học, phải reflect vào file buổi học riêng
+  
+- **Quy trình làm việc:**
+  1. Khi user yêu cầu chỉnh sửa buổi học → Cập nhật file `BuoiX.md` TRƯỚC
+  2. Sau đó tự động cập nhật phần tương ứng trong `ChuongTrinhDaoTao.md`
+  3. Khi user yêu cầu chỉnh sửa `ChuongTrinhDaoTao.md` → Cập nhật file `BuoiX.md` tương ứng
+
+## Ngôn Ngữ và Phong Cách Viết
+
+### 3. Ngôn Ngữ Phù Hợp với Người Mới Học
+- **Tránh thuật ngữ khó hiểu:** Nếu phải dùng thuật ngữ kỹ thuật, phải giải thích bằng ngôn ngữ đơn giản
+- **Ví dụ tốt:**
+  - ❌ "Dependency Injection là một design pattern..."
+  - ✅ "Dependency Injection (Tiêm phụ thuộc) giống như việc bạn đặt hàng pizza. Thay vì tự đi mua nguyên liệu, bạn chỉ cần gọi điện và nhà hàng sẽ mang đến cho bạn. Spring Framework cũng vậy, thay vì bạn phải tự tạo đối tượng, Spring sẽ tự động tạo và đưa cho bạn sử dụng."
+
+- **Sử dụng phép so sánh thực tế:** So sánh với các khái niệm quen thuộc trong cuộc sống
+- **Tránh jargon không cần thiết:** Chỉ dùng thuật ngữ khi thực sự cần thiết và đã giải thích rõ
+
+### 3.1. Dịch Thuật và Thuật Ngữ
+- **QUAN TRỌNG:** Khi dịch từ tiếng Anh sang tiếng Việt, phải đảm bảo rõ nghĩa và dễ hiểu
+- **Nguyên tắc dịch:**
+  - ✅ Dịch đúng ngữ cảnh, không dịch word-by-word
+  - ✅ Giữ nguyên thuật ngữ kỹ thuật phổ biến nếu cần (kèm giải thích)
+  - ✅ Thêm phần giải thích trong ngoặc nếu thuật ngữ khó hiểu
+  - ❌ Tránh dịch máy móc, không rõ nghĩa
+  
+- **Ví dụ dịch tốt:**
+  - ❌ "Dependency Injection là một pattern thiết kế cho phép một object nhận các dependencies của nó"
+  - ✅ "Dependency Injection (Tiêm phụ thuộc) là một kỹ thuật cho phép một đối tượng nhận các thành phần phụ thuộc từ bên ngoài, thay vì tự tạo ra chúng"
+  
+- **Khi gặp thuật ngữ mới:**
+  1. Dịch sang tiếng Việt rõ nghĩa
+  2. Giữ nguyên thuật ngữ tiếng Anh trong ngoặc (nếu cần)
+  3. Giải thích ngắn gọn ý nghĩa
+
+### 4. Giải Thích Khái Niệm Mới - Cấu Trúc Bắt Buộc
+- **MỖI khái niệm mới PHẢI có đầy đủ 4 phần sau:**
+
+#### 4.1. Định Nghĩa Khái Niệm
+- **Giải thích kỹ định nghĩa:** Phải giải thích rõ ràng khái niệm là gì, không được mơ hồ
+- **Cấu trúc:**
+  - Bắt đầu bằng câu định nghĩa ngắn gọn
+  - Sau đó giải thích chi tiết bằng ngôn ngữ đơn giản
+  - So sánh với khái niệm quen thuộc nếu có thể
+  
+- **Ví dụ:**
+  ```markdown
+  ### @Autowired Annotation
+  
+  **Định nghĩa:** @Autowired là một annotation của Spring Framework dùng để tự động "tiêm" (inject) các đối tượng phụ thuộc vào một class. Nó giống như việc bạn đặt hàng pizza và nhà hàng tự động mang đến cho bạn, bạn không cần phải tự đi mua nguyên liệu.
+  ```
+
+#### 4.2. Cách Thức Hoạt Động
+- **Giải thích cách hoạt động:** Phải mô tả rõ khái niệm hoạt động như thế nào, quy trình ra sao
+- **Cấu trúc:**
+  - Mô tả quy trình từng bước
+  - Giải thích điều gì xảy ra ở mỗi bước
+  - Có thể dùng sơ đồ hoặc mô tả bằng lời
+  
+- **Ví dụ:**
+  ```markdown
+  **Cách thức hoạt động:**
+  1. Khi Spring khởi động, nó quét tất cả các class có annotation @Component, @Service, @Repository, @Controller
+  2. Spring tạo các đối tượng (bean) từ những class này và lưu vào "container"
+  3. Khi gặp @Autowired, Spring tự động tìm trong container xem có đối tượng nào phù hợp không
+  4. Nếu tìm thấy, Spring tự động "tiêm" đối tượng đó vào field/method/constructor được đánh dấu @Autowired
+  5. Nếu không tìm thấy, Spring sẽ báo lỗi (trừ khi dùng @Autowired(required = false))
+  ```
+
+#### 4.3. Trường Hợp Sử Dụng Thực Tế
+- **Khi nào nên dùng:** Phải liệt kê các tình huống cụ thể khi nào nên sử dụng khái niệm này
+- **Cấu trúc:**
+  - Liệt kê các use case cụ thể
+  - Giải thích tại sao nên dùng trong từng trường hợp
+  - So sánh với các cách khác (nếu có)
+  
+- **Ví dụ:**
+  ```markdown
+  **Trường hợp sử dụng thực tế:**
+  - ✅ Khi một Controller cần sử dụng Service: Dùng @Autowired để Spring tự động đưa Service vào Controller
+  - ✅ Khi một Service cần sử dụng Repository: Dùng @Autowired để Spring tự động đưa Repository vào Service
+  - ✅ Khi cần inject dependency vào constructor: Dùng @Autowired trên constructor (khuyến nghị)
+  - ❌ Không nên dùng @Autowired trên field private nếu có thể tránh được (khó test)
+  ```
+
+#### 4.4. Ví Dụ Minh Họa (Đúng và Sai)
+- **Bắt buộc có cả ví dụ đúng và sai:** Giúp học viên hiểu rõ hơn về cách sử dụng
+- **Cấu trúc:**
+  ```markdown
+  **Ví dụ đúng:**
+  ```java
+  // Code ví dụ đúng với giải thích
+  ```
+  
+  **Ví dụ sai:**
+  ```java
+  // Code ví dụ sai
+  ```
+  
+  **Tại sao sai:** [Giải thích tại sao cách này sai, sẽ gặp lỗi gì]
+  ```
+  
+- **Ví dụ minh họa phải:**
+  - Có comment giải thích từng bước
+  - Có output/result mong đợi (cho ví dụ đúng)
+  - Có giải thích lỗi sẽ gặp (cho ví dụ sai)
+  - Có ví dụ đơn giản và ví dụ trong dự án Taxi
+
+- **Cấu trúc đầy đủ cho mỗi khái niệm:**
+  ```markdown
+  ### Khái niệm X
+  
+  #### 1. Định Nghĩa
+  [Giải thích kỹ định nghĩa khái niệm]
+  
+  #### 2. Cách Thức Hoạt Động
+  [Mô tả quy trình hoạt động]
+  
+  #### 3. Trường Hợp Sử Dụng Thực Tế
+  [Khi nào nên dùng, khi nào không nên]
+  
+  #### 4. Ví Dụ Minh Họa
+  
+  **Ví dụ đơn giản - Cách đúng:**
+  ```java
+  // Code ví dụ đơn giản đúng
+  ```
+  
+  **Ví dụ đơn giản - Cách sai:**
+  ```java
+  // Code ví dụ đơn giản sai
+  ```
+  **Tại sao sai:** [Giải thích]
+  
+  **Ví dụ trong dự án Taxi - Cách đúng:**
+  ```java
+  // Code áp dụng vào Taxi Booking System - đúng
+  ```
+  
+  **Ví dụ trong dự án Taxi - Cách sai:**
+  ```java
+  // Code áp dụng vào Taxi Booking System - sai
+  ```
+  **Tại sao sai:** [Giải thích]
+  ```
+
+## Dự Án Thực Hành
+
+### 5. Bám Sát Dự Án Taxi Booking System
+- **TẤT CẢ ví dụ và bài tập phải liên quan đến Taxi Booking System**
+- **Cấu trúc dự án:**
+  - Tên dự án: `taxi-booking-backend`
+  - Các entity chính: `User`, `Booking`, `Feedback`
+  - Các role: `ROLE_PASSENGER`, `ROLE_DRIVER`, `ROLE_ADMIN`
+  
+- **Khi tạo ví dụ:**
+  - ❌ Không dùng ví dụ generic như "Product", "Order" (trừ khi là bài tập riêng để hiểu khái niệm)
+  - ✅ Luôn dùng "Booking", "User", "Driver", "Passenger"
+  
+- **Các luồng nghiệp vụ chính cần áp dụng:**
+  - Đặt xe (Booking Flow)
+  - Nhận chuyến (Acceptance Flow)
+  - Hoàn thành chuyến (Completion Flow)
+  - Hủy chuyến tự động (Cancellation Flow)
+
+## Quy Tắc Code và Ví Dụ
+
+### 6. Code Examples
+- **Mỗi đoạn code phải có:**
+  - Comment giải thích bằng tiếng Việt
+  - Giải thích tại sao làm như vậy
+  - Ví dụ input/output nếu có
+  
+- **Format code:**
+  ```java
+  // Giải thích ngắn gọn về đoạn code này
+  @RestController
+  @RequestMapping("/api/bookings")
+  public class BookingController {
+      
+      // Giải thích về dependency này
+      @Autowired
+      private BookingService bookingService;
+      
+      // Giải thích về method này
+      @PostMapping
+      public ResponseEntity<BookingResponseDTO> createBooking(
+          @RequestBody BookingRequestDTO request
+      ) {
+          // Logic xử lý
+      }
+  }
+  ```
+
+### 7. Bài Tập Thực Hành
+- **Mỗi bài tập phải:**
+  - Có mục tiêu rõ ràng
+  - Có hướng dẫn từng bước
+  - Có kết quả mong đợi
+  - Liên quan đến Taxi Booking System
+  
+- **Cấu trúc bài tập:**
+  ```markdown
+  ### Bài tập: [Tên bài tập]
+  
+  **Mục tiêu:** [Học viên sẽ học được gì]
+  
+  **Yêu cầu:**
+  1. [Bước 1]
+  2. [Bước 2]
+  
+  **Kết quả mong đợi:**
+  - [Kết quả 1]
+  - [Kết quả 2]
+  
+  **Gợi ý:** [Nếu cần]
+  ```
+
+## Quy Tắc Khi Tạo/Chỉnh Sửa Nội Dung
+
+### 8. Khi Tạo File Buổi Học Mới
+1. Tạo file `BuoiX.md` với cấu trúc chuẩn
+2. Điền đầy đủ nội dung: Kiến thức, Thực hành, Dự án Taxi
+3. Đảm bảo có ví dụ cho mỗi khái niệm
+4. Sau đó cập nhật `ChuongTrinhDaoTao.md` với nội dung tương ứng
+
+### 9. Khi Chỉnh Sửa Nội Dung
+- **Nếu chỉnh sửa file buổi học:**
+  1. Cập nhật `BuoiX.md`
+  2. Tìm phần tương ứng trong `ChuongTrinhDaoTao.md` (dựa vào số buổi)
+  3. Cập nhật phần đó trong `ChuongTrinhDaoTao.md` để đồng bộ
+  
+- **Nếu chỉnh sửa `ChuongTrinhDaoTao.md`:**
+  1. Xác định buổi học nào bị ảnh hưởng
+  2. Cập nhật file `BuoiX.md` tương ứng
+  3. Đảm bảo nội dung khớp nhau
+
+### 10. Kiểm Tra Đồng Bộ
+- Trước khi hoàn thành task, luôn kiểm tra:
+  - Nội dung trong `BuoiX.md` và `ChuongTrinhDaoTao.md` có khớp không?
+  - Có đủ ví dụ cho mỗi khái niệm mới không?
+  - Ví dụ có liên quan đến Taxi Booking System không?
+  - Ngôn ngữ có phù hợp với người mới học không?
+
+## Lưu Ý Đặc Biệt
+
+### 11. VS Code Integration
+- Luôn đề cập đến cách làm việc với VS Code khi có thể
+- Hướng dẫn keyboard shortcuts và extensions hữu ích
+- Giải thích cách debug, run, test trong VS Code
+
+### 12. Progressive Learning
+- Kiến thức phải được sắp xếp từ dễ đến khó
+- Mỗi buổi học phải build dựa trên kiến thức buổi trước
+- Không nhảy cóc, phải có logic học tập rõ ràng
+
+### 13. Practical Focus
+- Ưu tiên thực hành hơn lý thuyết
+- Mỗi khái niệm phải có bài tập thực hành ngay
+- Code examples phải có thể chạy được (hoặc gần như vậy)
+
+---
+
+**Tóm tắt nguyên tắc vàng:**
+1. ✅ Mỗi buổi = 1 file riêng
+2. ✅ Luôn đồng bộ 2 chiều với ChuongTrinhDaoTao.md
+3. ✅ Ngôn ngữ đơn giản, dễ hiểu cho người mới
+4. ✅ Dịch từ tiếng Anh sang tiếng Việt phải rõ nghĩa, không dịch máy móc
+5. ✅ Mỗi khái niệm mới PHẢI có đầy đủ 4 phần:
+   - Định nghĩa khái niệm (giải thích kỹ)
+   - Cách thức hoạt động
+   - Trường hợp sử dụng thực tế
+   - Ví dụ minh họa (cả đúng và sai)
+6. ✅ Tất cả ví dụ/bài tập = Taxi Booking System
+
