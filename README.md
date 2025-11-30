@@ -225,7 +225,7 @@ Tài liệu này được tạo cho mục đích giáo dục và có thể đư�
 #### Giai đoạn 1: Khởi động & Nền tảng Spring Core (Buổi 1 - 4)
 - ✅ **[Buoi1.md](./Buoi1.md)** - Tổng quan, Môi trường & Git Workflow
 - ✅ **[Buoi2.md](./Buoi2.md)** - Tư duy OOP & Spring Core (DI/IoC)
-- ⏳ **[Buoi3.md](./Buoi3.md)** - Spring Boot & REST API Cơ bản *(Đang cập nhật)*
+- ✅ **[Buoi3.md](./Buoi3.md)** - Spring Boot & REST API Cơ bản
 - ⏳ **[Buoi4.md](./Buoi4.md)** - Request/Response & DTO Pattern *(Đang cập nhật)*
 
 #### Giai đoạn 2: Database & JPA (Buổi 5 - 8)

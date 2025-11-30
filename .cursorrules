@@ -253,6 +253,10 @@
 2. Điền đầy đủ nội dung: Kiến thức, Thực hành, Dự án Taxi
 3. Đảm bảo có ví dụ cho mỗi khái niệm
 4. Sau đó cập nhật `ChuongTrinhDaoTao.md` với nội dung tương ứng
+5. **QUAN TRỌNG:** Cập nhật `README.md` trong phần "Phụ lục: Danh sách tài liệu":
+   - Thêm link đến file `BuoiX.md` mới tạo
+   - Cập nhật trạng thái từ ⏳ "Đang cập nhật" thành ✅ "Đã hoàn thành"
+   - Đảm bảo link và mô tả buổi học chính xác
 
 ### 9. Khi Chỉnh Sửa Nội Dung
 - **Nếu chỉnh sửa file buổi học:**
@@ -268,6 +272,7 @@
 ### 10. Kiểm Tra Đồng Bộ
 - Trước khi hoàn thành task, luôn kiểm tra:
   - Nội dung trong `BuoiX.md` và `ChuongTrinhDaoTao.md` có khớp không?
+  - `README.md` đã được cập nhật với link và trạng thái của buổi học mới chưa?
   - Có đủ ví dụ cho mỗi khái niệm mới không?
   - Ví dụ có liên quan đến Taxi Booking System không?
   - Ngôn ngữ có phù hợp với người mới học không?
@@ -294,12 +299,13 @@
 **Tóm tắt nguyên tắc vàng:**
 1. ✅ Mỗi buổi = 1 file riêng
 2. ✅ Luôn đồng bộ 2 chiều với ChuongTrinhDaoTao.md
-3. ✅ Ngôn ngữ đơn giản, dễ hiểu cho người mới
-4. ✅ Dịch từ tiếng Anh sang tiếng Việt phải rõ nghĩa, không dịch máy móc
-5. ✅ Mỗi khái niệm mới PHẢI có đầy đủ 4 phần:
+3. ✅ Khi tạo buổi học mới, PHẢI cập nhật README.md (thêm link và cập nhật trạng thái)
+4. ✅ Ngôn ngữ đơn giản, dễ hiểu cho người mới
+5. ✅ Dịch từ tiếng Anh sang tiếng Việt phải rõ nghĩa, không dịch máy móc
+6. ✅ Mỗi khái niệm mới PHẢI có đầy đủ 4 phần:
    - Định nghĩa khái niệm (giải thích kỹ)
    - Cách thức hoạt động
    - Trường hợp sử dụng thực tế
    - Ví dụ minh họa (cả đúng và sai)
-6. ✅ Tất cả ví dụ/bài tập = Taxi Booking System
+7. ✅ Tất cả ví dụ/bài tập = Taxi Booking System
 
