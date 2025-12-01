@@ -44,6 +44,11 @@
 - Khởi tạo cấu trúc dự án `taxi-booking-backend` chuẩn (Maven, Dependencies cơ bản)
 - Mở project trong VS Code, kiểm tra Java extension hoạt động
 
+#### Chuẩn bị cho buổi 2:
+- Cài xong toàn bộ toolchain (JDK, VS Code extensions, Git, Postman/Thunder Client)
+- Tạo repository `taxi-booking-backend` trên GitHub và push commit đầu tiên
+- Ghi chú lại cách khởi động project trong VS Code để lặp lại nhanh ở buổi sau
+
 ---
 
 ### Buổi 2: Tư duy OOP & Spring Core (DI/IoC)
@@ -73,10 +78,16 @@
 
 #### Thực Hành:
 - Tạo một `Coach` interface và inject các loại Coach khác nhau vào `MainApp`
+- Viết thêm `FareEstimateService` đơn giản để chuẩn bị cho API ở buổi sau
 - Practice navigation: Go to definition, find references trong VS Code
 
 #### Dự án Taxi:
 - Chưa áp dụng (tập trung lý thuyết cốt lõi)
+
+#### Chuẩn bị cho buổi 3:
+- Commit ví dụ DI/IoC vào repo để tái sử dụng làm Service layer
+- Ghi chú lại vai trò của `@Component`, `@Service`, `@Autowired` vì sẽ wiring thật trong Booking API
+- Đảm bảo VS Code chạy được unit test nhỏ (nếu có) để quen thao tác Run/Debug
 
 ---
 
@@ -101,20 +112,34 @@
 - Viết API `GET /api/welcome`: Trả về "Welcome to Taxi App"
 - Run app trong VS Code và test bằng Postman/Thunder Client
 
+#### Chuẩn bị cho buổi 4:
+- Đảm bảo API `GET /api/welcome` đang hoạt động và đã lưu request trong Thunder Client
+- Tạo sẵn `BookingController` rỗng và note các endpoint dự kiến (calculate, create, detail)
+- Nắm chắc cách Run/Debug trong VS Code để khi thêm `@RequestParam`, `@RequestBody` có thể quan sát nhanh
+
 ---
 
 ### Buổi 4: Request Handling & Response Entity
 
 #### Kiến thức:
-- Nhận dữ liệu: `@RequestParam` (cho filter), `@PathVariable` (cho ID), `@RequestBody` (cho JSON)
-- **HTTP Methods:** GET, POST, PUT, DELETE
-- **ResponseEntity:** Kiểm soát HTTP Status Code (200, 201, 400, 404, 500)
+- `@RequestParam` cho phép nhận filter linh hoạt (page, size, status) với default value
+- `@PathVariable` lấy ID trực tiếp từ URL, đổi tên biến, phối hợp nhiều biến trên cùng route
+- `@RequestBody` parse JSON → DTO, thiết lập `Content-Type`, dùng record trong Java 17, debug payload trong VS Code
+- **HTTP Methods chuẩn REST:** GET/POST/PUT/DELETE (ý nghĩa, khi nào dùng, lỗi thường gặp khi dùng sai)
+- `ResponseEntity` để đặt status code (200/201/204/400/404/500), header tùy chỉnh (`Location`, `X-*`), flow tổng hợp BookingController
+- VS Code tips: dùng Thunder Client để lưu request collection, log nhanh bằng snippet `log`
 
 #### Thực Hành:
-- API Calculator (Cộng trừ nhân chia)
+- API Calculator 4 phép tính, lưu request Thunder Client, phân biệt status code chuẩn
+- Tạo API preview giá cước có validate currency, in log từ VS Code Terminal
 
 #### Dự án Taxi:
-- Viết API `POST /api/bookings/calculate`: Nhập vào khoảng cách (km), loại xe → Trả về giá tiền ước tính (Logic if-else đơn giản, chưa cần DB)
+- API `POST /api/bookings/calculate`: Nhận JSON (`distanceInKm`, `carType`, `pickupDistrict`), tính `FareEstimateDTO`, trả về `201 Created` + header `X-Taxi-Estimate-Version`, validate dữ liệu âm, log bằng `LoggerFactory`
+
+#### Chuẩn bị cho buổi 5:
+- Tổng hợp danh sách dữ liệu đang cần lưu (user, booking, feedback) dựa trên các API đã viết
+- Cài đặt MySQL 8 (nếu chưa), đảm bảo có thể truy cập bằng command line hoặc Workbench
+- Xác định rõ biến môi trường cần dùng cho kết nối DB để cấu hình nhanh ở buổi sau
 
 ---
 
@@ -125,22 +150,24 @@
 ### Buổi 5: Thiết kế CSDL & Kết nối MySQL
 
 #### Kiến thức:
-- Tư duy thiết kế **ERD (Entity Relationship Diagram)**
-- Cấu hình `application.properties`: Datasource URL, Username, Password
-- **Hibernate ddl-auto:** `update` vs `create-drop`
-- **VS Code Database Tools:**
-  - Extension: **MySQL** (của WeChat) hoặc **SQLTools** (của Matheus Teixeira)
-  - Kết nối MySQL từ VS Code, xem và query database trực tiếp
-  - Hoặc dùng MySQL Workbench/DBeaver (tool bên ngoài)
+- Phân tích nghiệp vụ Taxi để vẽ **ERD (Entity Relationship Diagram)** với quan hệ User ↔ Booking ↔ Feedback
+- Cấu hình datasource trong `application.properties`: URL, user/password riêng, `serverTimezone`, show-sql
+- Hiểu rõ `spring.jpa.hibernate.ddl-auto` (`create-drop`, `update`, `validate`) và chọn chế độ phù hợp từng môi trường
+- Sử dụng **VS Code Database Tools/SQLTools** để tạo connection profile, chạy query, bật “Safe Update”
 
 #### Thực Hành:
-- Cài đặt MySQL Workbench/DBeaver hoặc MySQL extension trong VS Code
-- Kết nối MySQL từ VS Code (nếu dùng extension)
+- Bài tập “Vẽ ERD Taxi Booking”: liệt kê entity, khóa chính/phụ, đề xuất index
+- Bài tập “Cấu hình MySQL & chạy thử kết nối”: tạo schema `taxi_booking_dev`, user `taxi_dev`, cấu hình `application-dev.properties`, chạy app và kiểm tra log
 
 #### Dự án Taxi:
-- Thiết kế bảng `users` (id, email, password, role) và `bookings`
-- Kết nối project với MySQL local
-- Test kết nối bằng cách run app và kiểm tra logs trong VS Code Terminal
+- Viết script SQL tạo bảng `users`, `bookings` (có khóa ngoại passenger/driver)
+- Cấu hình profile `dev` với datasource riêng và `ddl-auto=validate`
+- Dùng SQLTools hoặc MySQL Workbench để chạy `SELECT` kiểm tra dữ liệu sau khi ứng dụng khởi động
+
+#### Chuẩn bị cho buổi 6:
+- Lưu script SQL đã chạy trong repo (folder `db/init` chẳng hạn) để dùng khi map Entity
+- Bật profile `dev` mặc định và xác nhận app kết nối thành công trước khi vào lớp
+- Ghi chú lại các cột/kiểu dữ liệu của bảng `users`, `bookings` để map annotation chuẩn
 
 ---
 
@@ -149,6 +176,7 @@
 #### Kiến thức:
 - `@Entity`, `@Table`, `@Id`, `@GeneratedValue`
 - **JpaRepository interface:** `save`, `findById`, `findAll`, `delete`
+- Mapping thực tế cho `User`, `DriverProfile`, `Booking`
 - **VS Code Debugging:**
   - Set breakpoint: Click vào số dòng bên trái hoặc `F9`
   - Debug mode: `F5` hoặc click vào "Run and Debug" panel
@@ -157,13 +185,18 @@
   - Debug Spring Boot app: Chọn "Java" configuration
 
 #### Thực Hành:
-- CRUD quản lý Sinh viên
-- Practice debugging: Set breakpoint trong Controller, Service, Repository
+- CRUD quản lý Passenger/Driver trên `UserController`
+- Debug flow tạo Booking: Set breakpoint Controller → Service → Repository
 
 #### Dự án Taxi:
 - Tạo Entity `User`
 - Viết API đăng ký tài khoản đơn giản (lưu thẳng vào DB, chưa mã hóa pass)
 - Debug API đăng ký: Set breakpoint để xem flow từ Controller → Service → Repository
+
+#### Chuẩn bị cho buổi 7:
+- Hoàn thành CRUD `UserController` và commit trước khi refactor DTO
+- Viết note những field nhạy cảm (password) để kiểm soát khi chuyển sang ResponseDTO
+- Đảm bảo hiểu rõ flow Controller → Service → Repository vì sẽ tách DTO ngay trên flow này
 
 ---
 
@@ -180,12 +213,17 @@
   - Organize Imports: `Shift+Alt+O` / `Shift+Option+O`
 
 #### Thực Hành:
-- Refactor bài Sinh viên dùng DTO
+- Refactor API đăng ký User/Driver dùng DTO chuẩn hóa input/output
 - Practice refactoring tools trong VS Code
 
 #### Dự án Taxi:
 - Tạo `RegisterRequestDTO`, `UserResponseDTO`
 - Refactor API đăng ký dùng DTO (dùng rename, extract method nếu cần)
+
+#### Chuẩn bị cho buổi 8:
+- Bảo đảm tất cả API trả về ResponseDTO, không expose Entity nữa
+- Ghi chú các rule dữ liệu (password tối thiểu 8 ký tự, email unique...) để chuyển thành validation rule
+- Chuẩn bị danh sách lỗi thường gặp khi đăng ký để xây dựng Exception Handler
 
 ---
 
@@ -202,6 +240,11 @@
 - Validate số điện thoại (phải 10 số), email đúng định dạng
 - Bắt lỗi `UserAlreadyExistsException` trả về JSON lỗi đẹp (message, status)
 
+#### Chuẩn bị cho buổi 9:
+- Đảm bảo `User` entity sạch dữ liệu (đã có unique constraint) để thêm quan hệ an toàn
+- Viết trước skeleton `Booking` entity với trường cơ bản, chưa map quan hệ
+- Ghi chú use case “1 passenger nhiều booking” để áp dụng ngay cho annotation quan hệ
+
 ---
 
 ### Buổi 9: JPA Relationships (Quan hệ bảng)
@@ -212,11 +255,16 @@
 - **Fetch Type:** LAZY vs EAGER
 
 #### Thực Hành:
-- Mapping Class - Student
+- Mapping quan hệ Passenger ↔ Booking ↔ Feedback trong project demo
 
 #### Dự án Taxi:
 - Mapping quan hệ: 1 User (Passenger) có nhiều Booking
 - Tạo Entity `Booking` liên kết với User (`passenger_id`, `driver_id`)
+
+#### Chuẩn bị cho buổi 10:
+- Seed thử một vài bản ghi `Booking` để có dữ liệu chạy query nâng cao
+- Ghi chú các truy vấn cần thiết (lịch sử chuyến, chuyến pending) để chuyển thành Query Method
+- Cài sẵn Flyway/Liquibase dependency để tiết kiệm thời gian setup migration
 
 ---
 
@@ -229,13 +277,18 @@
 - **Multiple Profiles:** `application-dev.properties` vs `application-prod.properties`
 
 #### Thực Hành:
-- Tìm sinh viên có điểm > 8.0
-- Setup Flyway migration scripts
+- Viết Query Method tìm Booking theo `status`, `driverId`, `createdAt`
+- Setup Flyway migration scripts để quản lý bảng `users`, `bookings`, `feedback`
 
 #### Dự án Taxi:
 - Viết API `GET /api/bookings/history`: Tìm tất cả chuyến đi của một user cụ thể
 - Viết API `GET /api/bookings/pending`: Tìm chuyến đi có status = 'PENDING'
 - Tạo file migration đầu tiên cho bảng `users` và `bookings`
+
+#### Chuẩn bị cho buổi 11:
+- Hoàn thiện migration scripts và đặt `ddl-auto=validate` để sẵn sàng bật security
+- Chuẩn bị dữ liệu mẫu User với nhiều role khác nhau (PASSENGER/DRIVER/ADMIN)
+- Ghi chú luồng login hiện tại để đối chiếu khi thêm Spring Security
 
 ---
 
@@ -256,6 +309,11 @@
 - Mã hóa mật khẩu User khi đăng ký
 - Cấu hình Security cho phép truy cập public vào `/auth/**`
 
+#### Chuẩn bị cho buổi 12:
+- Lưu quy trình đăng nhập Basic Auth thành diagram để dễ chuyển sang JWT
+- Đảm bảo có bảng `users` với cột password đã mã hóa BCrypt
+- Chuẩn bị DTO `LoginRequest` để tái sử dụng khi xây dựng JWT login
+
 ---
 
 ### Buổi 12: JWT (JSON Web Token) Implementation
@@ -270,6 +328,11 @@
 #### Dự án Taxi:
 - Viết API `POST /auth/login` trả về Access Token
 - Viết `JwtFilter` để chặn các request không có token
+
+#### Chuẩn bị cho buổi 13:
+- Test kỹ API login + JWT filter và ghi lại sample token để dùng trong phần role-based
+- Tạo sẵn User mẫu cho từng role (PASSENGER/DRIVER/ADMIN) và lưu token tương ứng
+- Note lại các endpoint cần phân quyền (booking accept, admin metrics...) để áp dụng `@PreAuthorize`
 
 ---
 
@@ -287,6 +350,11 @@
 - Chặn API: Chỉ DRIVER mới được gọi API nhận chuyến (`/accept`)
 - Logic: Khi tạo Booking, tự động lấy ID của người đang login làm `passenger_id`
 
+#### Chuẩn bị cho buổi 14:
+- Tổng hợp các endpoint cần upload file/avatar để chuẩn bị payload mẫu
+- Kiểm tra lại kích thước/đường dẫn lưu file trên local dev để cấu hình static resources
+- Chuẩn bị bộ Postman collection đã gắn JWT token để test cùng upload
+
 ---
 
 ### Buổi 14: File Upload & Static Resources
@@ -303,6 +371,11 @@
 - API Upload Avatar cho Driver
 - Lưu đường dẫn ảnh vào bảng User
 
+#### Chuẩn bị cho buổi 15:
+- Ghi nhận số lượng booking dự kiến hiển thị mỗi trang để set default `PageRequest`
+- Xác định các bộ lọc phổ biến (status, driverId, date range) nhằm chuẩn hóa query params
+- Đảm bảo bảng `bookings` đã có dữ liệu thật để test phân trang/sorting
+
 ---
 
 ### Buổi 15: Pagination & Sorting (Phân trang)
@@ -316,6 +389,11 @@
 
 #### Dự án Taxi:
 - Nâng cấp API lịch sử chuyến đi: Trả về 10 chuyến mới nhất mỗi trang
+
+#### Chuẩn bị cho buổi 16:
+- Viết danh sách event quan trọng trong Taxi flow (booking completed, pending timeout) để áp dụng email/schedule
+- Cấu hình service SMTP thử nghiệm (Gmail App Password, Mailtrap...) và lưu credential dạng env
+- Xác định cron cần thiết (5 phút kiểm tra pending) để chuyển thành `@Scheduled`
 
 ---
 
@@ -332,6 +410,11 @@
 - Gửi Email xác nhận khi chuyến đi hoàn thành (COMPLETED)
 - Job chạy ngầm: Mỗi 5 phút quét DB, hủy các chuyến PENDING quá 30 phút
 
+#### Chuẩn bị cho buổi 17:
+- Đánh giá endpoint nào đọc dữ liệu lặp lại nhiều lần để xác định mục tiêu cache
+- Cài đặt/chuẩn bị Docker Redis (hoặc dịch vụ tương đương) trước lớp
+- Liệt kê chiến lược invalidation (khi giá cước thay đổi, khi driver update vị trí) để thử `@CacheEvict`
+
 ---
 
 ### Buổi 17: Caching với Redis (Tăng tốc)
@@ -346,6 +429,11 @@
 #### Dự án Taxi:
 - Cache bảng giá cước (ít thay đổi)
 - (Nâng cao) Lưu vị trí tài xế tạm thời trên Redis
+
+#### Chuẩn bị cho buổi 18:
+- Ghi chú các service quan trọng cần test (BookingService, FareCalculator, DriverAssignment)
+- Thiết lập VS Code Test Explorer hoạt động để chạy JUnit/Mokito
+- Chuẩn bị dữ liệu giả (mock data) cho từng use case để đưa vào unit test
 
 ---
 
@@ -370,6 +458,11 @@
 - Run tất cả tests từ VS Code Test Explorer
 - Debug test để xem flow và variables
 
+#### Chuẩn bị cho buổi 19:
+- Đảm bảo toàn bộ test pass để tự tin đóng gói Docker/Deploy
+- Viết file `.env.example` liệt kê biến môi trường để dùng trong Docker Compose
+- Cài đặt Docker Desktop (hoặc Podman) trước khi bước vào buổi Docker
+
 ---
 
 ## Giai đoạn 4: Deployment & Hoàn thiện (Buổi 19 - 24)
@@ -390,6 +483,11 @@
 - Viết `docker-compose.yml` chạy App + DB (cho local)
 
 **Lưu ý:** Render có thể build trực tiếp từ source code, không nhất thiết cần Docker. Buổi này hữu ích cho hiểu biết về containerization nhưng không bắt buộc cho deployment lên Render.
+
+#### Chuẩn bị cho buổi 20:
+- Đảm bảo build Docker image thành công (nếu tham gia) để dùng lại trong CI/CD
+- Ghi chú các bước build/test thủ công hiện có → sẽ chuyển thành bước trong GitHub Actions
+- Soạn sẵn thông tin kết nối Render PostgreSQL/dev database để đưa vào secrets
 
 ---
 
@@ -425,6 +523,11 @@
 - Setup GitHub Secrets: `RENDER_API_KEY`, `RENDER_SERVICE_ID` (nếu dùng Render API)
 - Commit và push workflow file, verify GitHub Actions chạy
 
+#### Chuẩn bị cho buổi 21:
+- Hoàn thiện workflow build/test cơ bản trước khi thêm bước deploy Render
+- Tổng hợp danh sách environment variables cần trên Render (DATABASE_URL, JWT_SECRET...)
+- Đảm bảo PostgreSQL trên Render đã có schema tối thiểu để test sau deploy
+
 ---
 
 ### Buổi 21: Deploy lên Render với GitHub Actions & Production Best Practices
@@ -457,6 +560,11 @@
 - Kiểm tra logs trên Render dashboard
 - Test health check endpoint
 
+#### Chuẩn bị cho buổi 22:
+- Ghi lại checklist deploy đã hoàn thành/thiếu để mang vào Sprint 1
+- Đảm bảo Swagger + Actuator đã chạy ở production để demo nhanh
+- Tổng hợp backlog tồn đọng (bug, tính năng) để lên kế hoạch Sprint
+
 ---
 
 ### Buổi 22: Dự án cuối kỳ - Sprint 1 (Setup & Auth & Deployment Setup)
@@ -470,6 +578,11 @@
 - Setup GitHub Actions workflow cơ bản
 - Setup PostgreSQL database trên Render
 - Deploy lên Render (có thể chưa hoàn chỉnh, nhưng phải có deployment pipeline)
+
+#### Chuẩn bị cho buổi 23:
+- Tổng hợp tiến độ Sprint 1, note rõ task nào còn dang dở
+- Chuẩn bị demo ngắn (Postman collection, URL production) để trình bày với giảng viên
+- Liệt kê câu hỏi/vướng mắc để được review 1-1 hiệu quả
 
 ---
 
@@ -488,6 +601,11 @@
 - **Bắt buộc:** Swagger documentation đầy đủ
 - Test toàn bộ API trên production environment
 - Cấu hình CORS, logging, error handling cho production
+
+#### Chuẩn bị cho buổi 24:
+- Hoàn tất checklist deploy + test từ Sprint 2, chụp hình minh chứng (logs, dashboard)
+- Viết script demo 5 phút tập trung vào value: đăng ký → đặt xe → driver nhận → hoàn thành
+- Chuẩn bị slide/bảng điểm KPI (số chuyến, thời gian phản hồi) để báo cáo
 
 ---
 

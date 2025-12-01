@@ -9,6 +9,9 @@
   ```markdown
   # Buổi {STT}: {Tên Buổi}
   
+  ## Ôn lại buổi trước
+  - [Checklist kiến thức/bài tập từ buổi trước]
+
   ## Kiến thức
   - [Nội dung kiến thức với ví dụ cụ thể]
   
@@ -18,6 +21,37 @@
   ## Dự án Taxi
   - [Áp dụng vào Taxi Booking System]
   ```
+
+#### 1.1. Phần Tổng Kết Bắt Buộc Cuối Mỗi Buổi
+- **QUY TẮC MỚI:** Mỗi file `Buoi{STT}.md` PHẢI có thêm phần tổng kết ở cuối file với cấu trúc chuẩn:
+  ```markdown
+  ## Tổng kết buổi {STT}
+  
+  **Những gì đã học:**
+  1. [Ý chính 1]
+  2. [Ý chính 2]
+  ...
+  
+  **Kiến thức quan trọng:**
+  - [Keyword/khái niệm 1]
+  - [Keyword/khái niệm 2]
+  
+  **Chuẩn bị cho buổi {STT+1}:**
+  - [Nội dung/hành động chuẩn bị]
+  
+  **Kiểm tra lại trước buổi {STT+1}:**
+  - [ ] [Checklist 1]
+  - [ ] [Checklist 2]
+  
+  **Bài tập về nhà (tùy chọn):**
+  - [Bài tập nâng cao, không bắt buộc]
+  ```
+- **Ví dụ tham chiếu:** `Buoi3.md` (mục `## Tổng kết buổi 3`) và các buổi sau (Buoi4, Buoi5, ...) phải tuân theo cùng format.
+
+#### 1.2. Phần "Ôn lại buổi trước" bắt buộc đầu mỗi file
+- **Quy tắc mới:** Sau tiêu đề `# Buổi {STT}: {Tên Buổi}`, mỗi file `Buoi{STT}.md` phải có mục `## Ôn lại buổi trước`.
+- Nội dung phần này phải liệt kê rõ những kiến thức, bài tập hoặc artefact từ buổi trước (Buổi `{STT-1}`) mà học viên cần hoàn thành trước khi bắt đầu buổi hiện tại. Với Buổi 1, liệt kê các chuẩn bị chung (tài khoản GitHub, thiết bị, tinh thần).
+- Không được viết chung chung; coi đây là checklist giúp đảm bảo lộ trình học xuyên suốt.
 
 ### 2. Đồng Bộ 2 Chiều với ChuongTrinhDaoTao.md
 - **QUAN TRỌNG:** Luôn đảm bảo đồng bộ giữa `ChuongTrinhDaoTao.md` và các file buổi học

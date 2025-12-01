@@ -1,5 +1,12 @@
 # Buổi 1: Tổng quan, Môi trường & Git Workflow
 
+## Ôn lại buổi trước
+
+Buổi 1 là điểm xuất phát nên chưa có nội dung nào trước đó. Bạn chỉ cần:
+- Đảm bảo máy tính ổn định, có quyền cài phần mềm và đủ dung lượng đĩa.
+- Chuẩn bị sẵn tài khoản GitHub, Gmail (dùng cho các dịch vụ tích hợp sau này).
+- Xem trước tổng quan về nghề Backend để hiểu lý do chúng ta học Spring Boot.
+
 ## Kiến thức
 
 ### 1. Backend Architecture: Client - Server - Database

@@ -226,10 +226,10 @@ Tài liệu này được tạo cho mục đích giáo dục và có thể đư�
 - ✅ **[Buoi1.md](./Buoi1.md)** - Tổng quan, Môi trường & Git Workflow
 - ✅ **[Buoi2.md](./Buoi2.md)** - Tư duy OOP & Spring Core (DI/IoC)
 - ✅ **[Buoi3.md](./Buoi3.md)** - Spring Boot & REST API Cơ bản
-- ⏳ **[Buoi4.md](./Buoi4.md)** - Request/Response & DTO Pattern *(Đang cập nhật)*
+- ✅ **[Buoi4.md](./Buoi4.md)** - Request Handling & Response Entity
 
 #### Giai đoạn 2: Database & JPA (Buổi 5 - 8)
-- ⏳ **[Buoi5.md](./Buoi5.md)** - Database Design & MySQL *(Đang cập nhật)*
+- ✅ **[Buoi5.md](./Buoi5.md)** - Thiết kế CSDL & Kết nối MySQL
 - ⏳ **[Buoi6.md](./Buoi6.md)** - Entity Mapping & Basic CRUD *(Đang cập nhật)*
 - ⏳ **[Buoi7.md](./Buoi7.md)** - DTO Pattern & Object Mapping *(Đang cập nhật)*
 - ⏳ **[Buoi8.md](./Buoi8.md)** - Validation & Global Exception Handling *(Đang cập nhật)*

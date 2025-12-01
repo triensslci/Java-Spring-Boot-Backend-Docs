@@ -1,5 +1,14 @@
 # Buổi 2: Tư duy OOP & Spring Core (DI/IoC)
 
+## Ôn lại buổi 1
+
+Trước khi học IoC/DI, hãy chắc rằng bạn đã hoàn tất các điểm mấu chốt của Buổi 1:
+- Đã cài đặt đầy đủ JDK 17, VS Code với các extension Java/Spring, Git và Postman/Thunder Client để không bị gián đoạn khi thực hành injection.
+- Đã clone project `taxi-booking-backend`, tạo branch cá nhân, chạy ứng dụng thử trong VS Code và quen với Terminal tích hợp.
+- Đã hiểu tối thiểu quy trình Git (add/commit/push) và có repo GitHub sẵn sàng để lưu các bài tập DI/IoC hôm nay.
+
+Nếu gặp trục trặc, hãy quay lại checklist của Buổi 1 để xử lý trước khi tiếp tục.
+
 ## Kiến thức
 
 ### 1. Ôn tập Interface và Abstract Class trong Java

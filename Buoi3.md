@@ -1,5 +1,14 @@
 # Buổi 3: Spring Boot & REST API Cơ bản
 
+## Ôn lại buổi 2
+
+Trước khi xây REST API, hãy chắc rằng bạn đã nắm vững nền tảng Spring Core từ Buổi 2:
+- Đã hiểu rõ IoC Container hoạt động thế nào và đã thực hành `@Component`, `@Service`, `@Repository`, `@Controller`, cùng cách dùng `@Autowired` (ưu tiên constructor injection) để wiring các lớp Coach/Service.
+- Biết phân biệt Singleton vs Prototype, có thể dùng `@Value`, `@Qualifier`, `@Primary` và hiểu vòng đời Bean (`@PostConstruct`, `@PreDestroy`) để chuẩn bị khi tạo các bean controller/service thật.
+- Đã luyện các phím tắt VS Code (F12, Shift+F12, Alt+F12, Cmd+.) nhằm di chuyển nhanh giữa Controller-Service-Repository khi viết API.
+
+Nếu những phần trên còn mơ hồ, hãy luyện lại bài tập Coach ở Buổi 2 trước khi tiếp tục, vì toàn bộ REST Controller hôm nay sẽ tái sử dụng các annotation đó.
+
 ## Kiến thức
 
 ### 1. Cấu trúc project Spring Boot chuẩn
