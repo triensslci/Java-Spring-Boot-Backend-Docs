@@ -253,28 +253,38 @@ spring.datasource.url=jdbc:mysql://localhost:3306/taxi_booking
 ### 4. Kết nối MySQL bằng VS Code Database Tools
 
 #### 1. Định Nghĩa
-VS Code Database Tools (SQLTools, MySQL extension) là bộ plugin giúp bạn xem bảng, chạy query ngay trong VS Code. Nó giống như gắn thêm gương chiếu hậu cho xe: bạn vừa code vừa quan sát được dữ liệu mà không cần mở ứng dụng ngoài.
+`Database Client for VS Code` (tên gói trên Open VSX: `vscode-mysql-client2`) là extension giúp VS Code trở thành “MySQL Workbench mini”. Bạn có thể duyệt bảng, xem schema, chạy query mà không cần rời khỏi editor. Đây là cách tối ưu khi vừa code Spring Boot vừa cần kiểm chứng dữ liệu Taxi Booking. (Tham khảo mô tả extension trên Open VSX.)
 
 #### 2. Cách Thức Hoạt Động
-1. Cài extension `SQLTools` và `SQLTools MySQL/MariaDB`.
-2. Nhấn `Cmd+Shift+P` → “SQLTools: New Connection”.
-3. Điền thông tin host, port, database, user, password.
-4. Extension lưu profile trong file `.vscode/settings.json`.
-5. Khi cần xem dữ liệu, mở view SQLTools, chọn connection → `Connect`.
-6. Từ VS Code, bạn có thể chạy `SELECT * FROM bookings LIMIT 10;` và xem kết quả ngay.
+1. Mở VS Code → Extensions (`Cmd+Shift+X`) → tìm “Database Client for VS Code” (ID `cweijan.vscode-mysql-client2`) → Install.
+2. Sau khi cài, panel **Database Client** xuất hiện trong Activity Bar. Chọn `+` → *Add Connection*.
+3. Điền thông tin:
+   - **DB Type:** MySQL
+   - **Host:** `localhost`
+   - **Port:** `3306`
+   - **User/Password:** user riêng (`taxi_dev`)
+   - **Database:** `taxi_booking_dev`
+   - **Safe Mode:** bật để extension yêu cầu xác nhận trước khi chạy lệnh nguy hiểm (`DROP`, `TRUNCATE`).
+4. Extension lưu thông tin trong `~/Library/Application Support/Code/User/settings.json` hoặc `.vscode/settings.json` (nếu bạn chọn “Save to Workspace”) → team khác mở project lên là dùng được ngay.
+5. Khi cần xem dữ liệu, click phải connection → `Connect`. Bạn có thể:
+   - Expand bảng để xem cột, index.
+   - Click `Query` → VS Code mở một `.sql` tab, bạn gõ `SELECT * FROM bookings LIMIT 5;` rồi nhấn `Cmd+Enter` để chạy.
+   - Kết quả hiển thị trong panel Result, có thể export CSV cho QA.
+6. Extension hỗ trợ snippets, history, thậm chí hiển thị ER diagram đơn giản dựa trên foreign key → rất hữu ích để nhắc lại quan hệ User ↔ Booking ↔ Feedback.
 
 #### 3. Trường Hợp Sử Dụng Thực Tế
-- ✅ Kiểm tra nhanh dữ liệu Booking sau khi chạy API.
-- ✅ Chụp screenshot ERD/diagram gửi cho đồng đội.
-- ✅ Chỉnh script SQL mà không phải chuyển qua Workbench/DBeaver.
-- ❌ Không nên chạy các lệnh nguy hiểm (DROP DATABASE) khi chưa chắc mình đang ở môi trường nào; hãy bật tuỳ chọn “Confirm execution”.
+- ✅ Sau khi gọi API `POST /api/bookings`, mở Database Client → chạy `SELECT` để kiểm tra record mới xuất hiện chưa.
+- ✅ Khi cần đối chiếu schema đã triển khai với file `db/init/users.sql`.
+- ✅ Trong buổi học, giảng viên yêu cầu share màn hình và trình diễn dữ liệu: chỉ cần mở panel Database Client ngay trong VS Code.
+- ✅ Kết hợp với Live Share: mentor có thể xem query học viên chạy và chỉnh sửa trực tiếp.
+- ❌ Không thao tác trực tiếp trên database production (dù extension hỗ trợ), trừ khi đã bật VPN, có quyền hạn và ghi log đầy đủ.
 
 #### 4. Ví Dụ Minh Họa
 
 **Ví dụ đơn giản - Cách đúng:**
 ```json
 {
-  "sqltools.connections": [
+  "database-client.connections": [
     {
       "name": "Taxi Local",
       "driver": "MySQL",
@@ -282,7 +292,8 @@ VS Code Database Tools (SQLTools, MySQL extension) là bộ plugin giúp bạn x
       "port": 3306,
       "database": "taxi_booking_dev",
       "username": "taxi_dev",
-      "password": "S3cureDev!"
+      "password": "S3cureDev!",
+      "safeMode": true
     }
   ]
 }
@@ -291,37 +302,154 @@ VS Code Database Tools (SQLTools, MySQL extension) là bộ plugin giúp bạn x
 **Ví dụ đơn giản - Cách sai:**
 ```json
 {
-  "sqltools.connections": [
+  "database-client.connections": [
     {
       "name": "Taxi Prod",
       "driver": "MySQL",
       "server": "prod-db.company.com",
       "database": "taxi_booking",
       "username": "root",
-      "password": "root"
+      "password": "root",
+      "safeMode": false
     }
   ]
 }
 ```
-**Tại sao sai:** Không nên lưu thông tin production trong VS Code cá nhân và dùng tài khoản root. Nếu laptop bị mất, dữ liệu công ty có nguy cơ bị truy cập trái phép.
+**Tại sao sai:** Lưu credential production kèm quyền root trong VS Code cá nhân rất nguy hiểm; chỉ một lần mất máy hoặc bật Live Share là lộ ngay. Ngoài ra tắt Safe Mode khiến câu lệnh `DROP` chạy tức thì.
 
 **Ví dụ trong dự án Taxi - Cách đúng:**
 ```sql
--- Query test trong VS Code sau khi chạy API /api/bookings
+-- Query kiểm tra các chuyến mới được tạo
 SELECT id, passenger_id, driver_id, status, total_fare
 FROM bookings
+WHERE status = 'PENDING'
 ORDER BY created_at DESC
 LIMIT 5;
 ```
 
 **Ví dụ trong dự án Taxi - Cách sai:**
 ```sql
--- ❌ Update trực tiếp status mà không WHERE → toàn bộ chuyến bị đổi trạng thái
+-- ❌ Quên WHERE khiến toàn bộ chuyến bị đổi trạng thái
 UPDATE bookings SET status = 'COMPLETED';
 ```
-**Tại sao sai:** Thiếu điều kiện WHERE khiến toàn bộ booking bị chuyển sang COMPLETED. Khi thao tác bằng extension, luôn double-check câu lệnh và bật “Safe Update”.
+**Tại sao sai:** Không có điều kiện `WHERE` nên mọi booking đều chuyển sang COMPLETED. Khi thao tác trong extension, hãy bật `Safe Mode` và đọc lại câu lệnh trước khi `Cmd+Enter`.
+
+**Quy trình VS Code mẫu:**
+1. Dùng `Cmd+Shift+P` → `Database Client: New Query`.
+2. Gõ câu SQL và nhấn `Cmd+Enter`.
+3. Nếu muốn lưu script, bấm `Cmd+S` để cất vào thư mục `db/playground`.
+4. Khi cần chia sẻ, dùng `Copy Results` → paste vào Slack/Notion cho mentor.
 
 ---
+
+### 5. Kết nối MySQL bằng Navicat
+
+#### 1. Định Nghĩa
+Navicat for MySQL (hoặc Navicat Premium) là một công cụ GUI giúp bạn quản lý MySQL thông qua giao diện trực quan: tạo database, bảng, chạy query, xem dữ liệu… giống như một “remote điều khiển” cho MySQL. Khi code trong VS Code, bạn có thể mở thêm Navicat để quan sát dữ liệu `taxi_booking_dev` thay vì phải gõ lệnh trong terminal. Điều này đặc biệt hữu ích cho người mới, vì mọi thứ (bảng, cột, khóa ngoại) đều được hiển thị bằng hình ảnh.
+
+#### 2. Cách Thức Hoạt Động
+1. **Cài đặt Navicat:**
+   - Tải Navicat bản dùng thử từ trang chủ (chọn phiên bản hỗ trợ MySQL).
+   - Cài đặt như ứng dụng bình thường trên macOS (kéo vào thư mục `Applications`).
+2. **Tạo kết nối mới đến MySQL local:**
+   - Mở Navicat → `File` → `New Connection` → chọn **MySQL**.
+   - Điền thông tin kết nối:
+     - **Connection Name:** `Taxi Local` (tên tùy ý, dễ nhận biết).
+     - **Host:** `127.0.0.1` hoặc `localhost`.
+     - **Port:** `3306` (hoặc port bạn đã cấu hình cho MySQL).
+     - **User Name:** `taxi_dev` (user riêng cho dự án Taxi).
+     - **Password:** password mạnh bạn đã tạo cho user `taxi_dev`.
+   - Bấm **Test Connection**:
+     - Nếu hiện “Connection Successful” → bấm **OK** để lưu kết nối.
+     - Nếu báo lỗi, kiểm tra lại:
+       - MySQL đã chạy chưa?
+       - Port đúng chưa?
+       - User/password đúng chưa?
+3. **Chọn database `taxi_booking_dev`:**
+   - Sau khi kết nối thành công, ở panel bên trái bạn sẽ thấy danh sách database.
+   - Click phải vào `taxi_booking_dev` → chọn **Open Database**.
+   - Mở tiếp thư mục **Tables** để xem các bảng (vd. `users`, `bookings`… sau khi bạn tạo).
+4. **Chạy query kiểm tra dữ liệu:**
+   - Click phải lên database `taxi_booking_dev` → **New Query**.
+   - Gõ SQL, ví dụ:
+     ```sql
+     -- Kiểm tra 5 chuyến đi mới nhất trong hệ thống Taxi
+     SELECT id, passenger_id, driver_id, status, total_fare, created_at
+     FROM bookings
+     ORDER BY created_at DESC
+     LIMIT 5;
+     ```
+   - Bấm nút **Run** (hình tia sét) hoặc phím tắt (tùy OS).
+   - Kết quả hiển thị ở panel phía dưới, bạn có thể:
+     - Sắp xếp theo cột.
+     - Lọc nhanh bằng filter.
+     - Export ra CSV/Excel nếu cần gửi cho mentor/QA.
+5. **Đồng bộ với VS Code:**
+   - Vừa mở project Spring Boot trong VS Code để code, vừa mở Navicat để quan sát dữ liệu.
+   - Sau khi gọi API (ví dụ `POST /api/bookings`), quay sang Navicat → bấm **Refresh** bảng `bookings` để xem record mới được thêm.
+
+#### 3. Trường Hợp Sử Dụng Thực Tế
+- ✅ Khi bạn **chưa quen câu lệnh SQL** nhưng vẫn muốn xem dữ liệu: Navicat hiển thị bảng dạng lưới giống Excel, dễ đọc.
+- ✅ Khi cần **chỉnh sửa dữ liệu test nhanh** (ví dụ đổi status một booking từ `PENDING` → `COMPLETED` để debug): có thể double click vào cell và sửa giá trị.
+- ✅ Khi cần **vẽ sơ đồ quan hệ**: một số phiên bản Navicat hỗ trợ reverse-engineer ERD từ database, giúp bạn nhìn lại quan hệ `users` ↔ `bookings` ↔ `feedback`.
+- ✅ Khi làm việc nhóm, mentor có thể yêu cầu bạn **chụp màn hình Navicat** để kiểm tra schema/dữ liệu.
+- ❌ Không dùng Navicat để thao tác thẳng trên database **production** nếu bạn chưa có quy trình backup/kiểm soát, vì chỉ một câu lệnh sai (ví dụ `DELETE`/`UPDATE` không có `WHERE`) có thể phá hủy dữ liệu thật.
+
+#### 4. Ví Dụ Minh Họa
+
+**Ví dụ đơn giản - Cách đúng:**
+```sql
+-- Sử dụng Navicat để kiểm tra số lượng user hiện có
+SELECT COUNT(*) AS total_users
+FROM users;
+
+-- Kiểm tra các chuyến đang ở trạng thái PENDING
+SELECT id, passenger_id, driver_id, status
+FROM bookings
+WHERE status = 'PENDING'
+ORDER BY created_at DESC
+LIMIT 10;
+```
+- Bạn chạy 2 câu lệnh trên trong cửa sổ Query của Navicat.
+- Kết quả giúp bạn:
+  - Biết đã có bao nhiêu user test trong hệ thống.
+  - Dễ dàng quan sát các booking đang chờ được driver nhận.
+
+**Ví dụ đơn giản - Cách sai:**
+```sql
+-- ❌ Cập nhật toàn bộ booking mà quên điều kiện WHERE
+UPDATE bookings
+SET status = 'COMPLETED';
+```
+**Tại sao sai:** Câu lệnh này sẽ chuyển **tất cả** booking (kể cả PENDING, IN_PROGRESS) sang COMPLETED. Nếu chạy trên database production sẽ phá hỏng toàn bộ luồng nghiệp vụ. Khi dùng Navicat, hãy:
+- Luôn đọc kỹ lại câu lệnh trước khi bấm Run.
+- Ưu tiên chạy trên database dev (`taxi_booking_dev`), không truy cập trực tiếp DB thật.
+
+**Ví dụ trong dự án Taxi - Cách đúng (Navicat + API):**
+1. Mở VS Code, chạy ứng dụng Spring Boot (`mvn spring-boot:run` hoặc Run trong VS Code).
+2. Gọi API tạo booking mới (vd. `POST /api/bookings`) bằng Thunder Client/Postman.
+3. Mở Navicat:
+   - Refresh bảng `bookings`.
+   - Chạy query:
+     ```sql
+     -- Xem các chuyến vừa tạo trong 5 phút gần nhất
+     SELECT id, passenger_id, driver_id, status, total_fare, created_at
+     FROM bookings
+     WHERE created_at >= NOW() - INTERVAL 5 MINUTE
+     ORDER BY created_at DESC;
+     ```
+4. Đối chiếu dữ liệu trong Navicat với payload bạn đã gửi từ VS Code để chắc chắn API hoạt động đúng.
+
+**Ví dụ trong dự án Taxi - Cách sai (kết hợp Navicat & app):**
+1. Ứng dụng đang bật `spring.jpa.hibernate.ddl-auto=validate` (chỉ kiểm tra schema, không tự sửa).
+2. Bạn vào Navicat, mở bảng `bookings` và **xóa nhầm cột** `passenger_id`.
+3. Restart ứng dụng:
+   - Hibernate validate schema thất bại vì thiếu cột `passenger_id`.
+   - App không khởi động được.
+
+**Tại sao sai:** Sửa cấu trúc bảng (thêm/xóa cột) trực tiếp trong Navicat mà không thông qua migration/script sẽ khiến schema **lệch** so với Entity và Flyway/Liquibase. Nguyên tắc:
+- Dùng Navicat để **xem dữ liệu, chạy SELECT, thao tác dữ liệu test nhỏ**.
+- Khi muốn thay đổi cấu trúc bảng (thêm cột, đổi kiểu dữ liệu) → hãy viết **script SQL/migration** rồi chạy có kiểm soát (review, commit vào repo).
 
 ## Thực hành
 

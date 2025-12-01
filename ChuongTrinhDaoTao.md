@@ -153,7 +153,9 @@
 - Phân tích nghiệp vụ Taxi để vẽ **ERD (Entity Relationship Diagram)** với quan hệ User ↔ Booking ↔ Feedback
 - Cấu hình datasource trong `application.properties`: URL, user/password riêng, `serverTimezone`, show-sql
 - Hiểu rõ `spring.jpa.hibernate.ddl-auto` (`create-drop`, `update`, `validate`) và chọn chế độ phù hợp từng môi trường
-- Sử dụng **VS Code Database Tools/SQLTools** để tạo connection profile, chạy query, bật “Safe Update”
+- Kết nối MySQL bằng công cụ trực quan: 
+  - Trong VS Code: dùng **Database Client for VS Code** (`cweijan.vscode-mysql-client2` trên Open VSX) để tạo profile, bật “Safe Mode” và chạy query kiểm tra booking
+  - Ngoài VS Code: dùng **Navicat for MySQL** để tạo connection `taxi_booking_dev`, chạy `SELECT`/`UPDATE` có kiểm soát và quan sát dữ liệu Taxi Booking
 
 #### Thực Hành:
 - Bài tập “Vẽ ERD Taxi Booking”: liệt kê entity, khóa chính/phụ, đề xuất index
