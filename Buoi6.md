@@ -295,45 +295,267 @@ CRUD là bộ 4 thao tác cơ bản nhất khi làm việc với dữ liệu:
 
 Trong dự án Taxi, hầu hết API bạn viết đều xoay quanh CRUD cho các entity chính: `User`, `Booking`, `Feedback`.
 
-Nó giống như bạn gọi một dịch vụ “tài xế công nghệ”: bạn chỉ cần đưa “địa chỉ” (Entity class) và “kiểu khóa chính”, Spring Data sẽ lo phần còn lại (tạo code CRUD, sinh SQL).
+Nó giống như bạn gọi một dịch vụ "tài xế công nghệ": bạn chỉ cần đưa "địa chỉ" (Entity class) và "kiểu khóa chính", Spring Data sẽ lo phần còn lại (tạo code CRUD, sinh SQL).
+
+**Generic Types trong JpaRepository:**
+Khi khai báo `JpaRepository<User, Long>`, bạn đang truyền 2 tham số kiểu (generic):
+- **Tham số đầu tiên (`User`)**: Entity class mà Repository này sẽ làm việc với. Đây là class Java đã được đánh dấu `@Entity`, đại diện cho bảng `users` trong database.
+- **Tham số thứ hai (`Long`)**: Kiểu dữ liệu của khóa chính (Primary Key) của Entity. Vì `User` có field `id` kiểu `Long`, nên bạn phải khai báo `Long` ở đây.
+
+**Tại sao cần 2 tham số này?**
+- Spring Data JPA cần biết Entity nào để map với bảng nào trong database.
+- Cần biết kiểu khóa chính để các method như `findById(Long id)`, `deleteById(Long id)` có thể hoạt động đúng.
+
+**Các method có sẵn trong JpaRepository:**
+Khi bạn extend `JpaRepository<User, Long>`, bạn tự động có sẵn các method sau (không cần viết code):
+
+**Create & Update:**
+- `save(T entity)`: Lưu hoặc cập nhật entity. Nếu `entity.id == null` → INSERT, nếu `entity.id` đã có → UPDATE.
+- `saveAll(Iterable<T> entities)`: Lưu nhiều entity cùng lúc.
+
+**Read (Đọc dữ liệu):**
+- `findById(ID id)`: Tìm entity theo khóa chính, trả về `Optional<T>` (có thể rỗng nếu không tìm thấy).
+- `findAll()`: Lấy tất cả entity trong bảng, trả về `List<T>`.
+- `existsById(ID id)`: Kiểm tra entity có tồn tại không, trả về `boolean`.
+- `count()`: Đếm tổng số entity trong bảng, trả về `long`.
+
+**Delete (Xóa):**
+- `deleteById(ID id)`: Xóa entity theo khóa chính.
+- `delete(T entity)`: Xóa entity cụ thể.
+- `deleteAll()`: Xóa tất cả entity trong bảng (nguy hiểm, cẩn thận khi dùng).
+
+**Tại sao `findById` trả về `Optional<T>`?**
+`Optional` là một class đặc biệt trong Java giúp xử lý trường hợp giá trị có thể **null** một cách an toàn. Thay vì trả về `User` (có thể null), Spring Data JPA trả về `Optional<User>` để bạn phải kiểm tra rõ ràng xem có tìm thấy hay không.
+
+**Ví dụ sử dụng Optional:**
+```java
+// Cách cũ (nguy hiểm, có thể NullPointerException):
+User user = userRepository.findById(1L); // user có thể null
+String email = user.getEmail(); // ❌ Lỗi nếu user == null
+
+// Cách mới (an toàn với Optional):
+Optional<User> userOpt = userRepository.findById(1L);
+if (userOpt.isPresent()) {
+    User user = userOpt.get();
+    String email = user.getEmail(); // ✅ An toàn
+} else {
+    // Xử lý trường hợp không tìm thấy
+}
+
+// Hoặc dùng lambda (ngắn gọn hơn):
+userRepository.findById(1L).ifPresent(user -> {
+    System.out.println(user.getEmail());
+});
+```
 
 #### 2. Cách Thức Hoạt Động
 
-1. Bạn tạo interface:
+1. **Bạn tạo interface:**
    ```java
    public interface UserRepository extends JpaRepository<User, Long> {
+       // Có thể thêm method tùy chỉnh ở đây (sẽ học sau)
    }
    ```
-2. Khi ứng dụng chạy:
-   - Spring Data JPA tự sinh **implementation thật** cho `UserRepository`.
-   - Đăng ký bean này trong IoC Container.
-3. Khi bạn inject `UserRepository` vào Service:
-   - Gọi `userRepository.save(user)` → JPA sinh `INSERT` hoặc `UPDATE`.
-   - Gọi `userRepository.findById(id)` → JPA sinh `SELECT ... WHERE id = ?`.
-   - Gọi `userRepository.findAll()` → JPA sinh `SELECT * FROM users`.
-   - Gọi `userRepository.deleteById(id)` → JPA sinh `DELETE FROM users WHERE id = ?`.
+   - Chỉ cần khai báo interface, **không cần** viết class implement.
+   - Spring Data JPA sẽ tự động tạo implementation cho bạn khi ứng dụng chạy.
+
+2. **Khi ứng dụng Spring Boot khởi động:**
+   - Spring Data JPA quét tất cả interface extends `JpaRepository`.
+   - Tự động tạo **proxy class** (class giả lập) implement interface đó.
+   - Proxy class này chứa code thực thi các method CRUD, tự sinh SQL tương ứng.
+   - Đăng ký proxy class này vào **IoC Container** như một Spring Bean.
+   - Bạn có thể inject `UserRepository` vào bất kỳ class nào (Service, Controller) bằng `@Autowired` hoặc constructor injection.
+
+3. **Khi bạn inject `UserRepository` vào Service và gọi method:**
+   - **`userRepository.save(user)`**: 
+     - Nếu `user.getId() == null` → JPA sinh SQL `INSERT INTO users (email, full_name, ...) VALUES (?, ?, ...)`.
+     - Nếu `user.getId()` đã có giá trị (ví dụ: 5) → JPA sinh SQL `UPDATE users SET email = ?, full_name = ?, ... WHERE id = 5`.
+     - Sau khi INSERT, JPA tự động lấy giá trị `id` vừa được MySQL sinh (AUTO_INCREMENT) và gán vào object `user`.
+   - **`userRepository.findById(5L)`**: 
+     - JPA sinh SQL `SELECT * FROM users WHERE id = 5`.
+     - Nếu tìm thấy → map dữ liệu từ database vào object `User`, bọc trong `Optional<User>`.
+     - Nếu không tìm thấy → trả về `Optional.empty()`.
+   - **`userRepository.findAll()`**: 
+     - JPA sinh SQL `SELECT * FROM users`.
+     - Map tất cả dòng kết quả thành `List<User>`.
+   - **`userRepository.deleteById(5L)`**: 
+     - JPA sinh SQL `DELETE FROM users WHERE id = 5`.
+     - Nếu không tìm thấy id → có thể ném exception hoặc không làm gì (tùy cấu hình).
+   - **`userRepository.existsById(5L)`**: 
+     - JPA sinh SQL `SELECT COUNT(*) FROM users WHERE id = 5`.
+     - Trả về `true` nếu COUNT > 0, `false` nếu COUNT = 0.
 
 #### 3. Trường Hợp Sử Dụng Thực Tế
 
 - ✅ Repository cho bảng `users`:
   - CRUD tài khoản Passenger/Driver/Admin.
+  - Tìm user theo email, theo role, theo phone...
 - ✅ Repository cho bảng `bookings`:
   - Lưu chuyến đi mới.
-  - Lấy danh sách booking.
+  - Lấy danh sách booking theo passenger, theo driver, theo status.
+  - Đếm số booking, kiểm tra booking có tồn tại không.
 - ✅ Dùng trong Service layer để:
   - Tách biệt **logic nghiệp vụ** (Service) khỏi **logic truy vấn DB** (Repository).
+  - Service chỉ cần gọi method của Repository, không cần biết SQL là gì.
 - ❌ Không nên nhét logic nghiệp vụ phức tạp vào Repository; hãy để Repository chỉ lo **truy cập dữ liệu**, còn nghiệp vụ để Service xử lý.
+
+**Query Method Naming Convention (Quy tắc đặt tên method tự động sinh query):**
+
+Spring Data JPA có khả năng **tự động sinh SQL query** dựa trên tên method bạn đặt trong Repository interface. Bạn chỉ cần đặt tên method theo quy tắc, không cần viết SQL.
+
+**Quy tắc cơ bản:**
+- Bắt đầu bằng: `find...`, `get...`, `read...`, `query...`, `count...`, `exists...`
+- Tiếp theo là tên Entity (có thể bỏ qua nếu rõ ràng từ context)
+- Sau đó là các điều kiện: `By...`, `And...`, `Or...`, `OrderBy...`
+
+**Ví dụ:**
+
+```java
+public interface UserRepository extends JpaRepository<User, Long> {
+    
+    // Tìm user theo email
+    // SQL: SELECT * FROM users WHERE email = ?
+    Optional<User> findByEmail(String email);
+    
+    // Tìm user theo email và role
+    // SQL: SELECT * FROM users WHERE email = ? AND role = ?
+    Optional<User> findByEmailAndRole(String email, String role);
+    
+    // Tìm tất cả user có role là PASSENGER
+    // SQL: SELECT * FROM users WHERE role = ?
+    List<User> findByRole(String role);
+    
+    // Đếm số user có role là DRIVER
+    // SQL: SELECT COUNT(*) FROM users WHERE role = ?
+    long countByRole(String role);
+    
+    // Kiểm tra email đã tồn tại chưa
+    // SQL: SELECT COUNT(*) > 0 FROM users WHERE email = ?
+    boolean existsByEmail(String email);
+    
+    // Tìm user theo fullName, sắp xếp theo email tăng dần
+    // SQL: SELECT * FROM users WHERE full_name = ? ORDER BY email ASC
+    List<User> findByFullNameOrderByEmailAsc(String fullName);
+    
+    // Tìm user có email chứa chuỗi (LIKE)
+    // SQL: SELECT * FROM users WHERE email LIKE %?%
+    List<User> findByEmailContaining(String keyword);
+}
+```
+
+**Lưu ý quan trọng:**
+- Tên method phải **khớp với tên field** trong Entity (ví dụ: `findByEmail` → field `email`, không phải `emailAddress`).
+- Nếu field trong Entity là `fullName` (camelCase), trong method bạn có thể dùng `findByFullName` hoặc `findByfullName` (Spring Data JPA tự động xử lý).
+- Tham số của method phải **theo đúng thứ tự** với điều kiện trong tên method (ví dụ: `findByEmailAndRole(String email, String role)` - email trước, role sau).
 
 #### 4. Ví Dụ Minh Họa
 
 **Ví dụ đơn giản - Cách đúng:**
 
 ```java
-// Repository cho bảng users
+// Repository cho bảng users - chỉ cần khai báo interface
 public interface UserRepository extends JpaRepository<User, Long> {
 
     // Spring Data JPA sẽ tự sinh query: SELECT * FROM users WHERE email = ?
+    // Trả về Optional để an toàn khi không tìm thấy
     Optional<User> findByEmail(String email);
+}
+```
+
+**Cách sử dụng trong Service:**
+
+```java
+@Service
+public class UserService {
+
+    @Autowired
+    private UserRepository userRepository;
+
+    // Ví dụ 1: Tìm user theo ID
+    public UserResponseDTO getUserById(Long id) {
+        Optional<User> userOpt = userRepository.findById(id);
+        
+        if (userOpt.isPresent()) {
+            User user = userOpt.get();
+            // Map sang DTO và trả về
+            return mapToDTO(user);
+        } else {
+            throw new IllegalArgumentException("Không tìm thấy user với ID: " + id);
+        }
+    }
+
+    // Ví dụ 2: Kiểm tra email đã tồn tại chưa
+    public boolean isEmailExists(String email) {
+        return userRepository.findByEmail(email).isPresent();
+        // Hoặc: return userRepository.existsById(...) nếu có method tương ứng
+    }
+
+    // Ví dụ 3: Lấy tất cả user
+    public List<UserResponseDTO> getAllUsers() {
+        List<User> users = userRepository.findAll();
+        return users.stream()
+            .map(this::mapToDTO)
+            .collect(Collectors.toList());
+    }
+
+    // Ví dụ 4: Đếm số lượng user
+    public long countUsers() {
+        return userRepository.count();
+    }
+
+    // Ví dụ 5: Lưu user mới (CREATE)
+    public UserResponseDTO createUser(RegisterUserRequest request) {
+        User newUser = new User();
+        newUser.setEmail(request.email);
+        newUser.setFullName(request.fullName);
+        newUser.setPassword(request.password);
+        newUser.setRole(request.role);
+        
+        // save() sẽ tự động INSERT vì newUser.getId() == null
+        User savedUser = userRepository.save(newUser);
+        // Sau khi save, savedUser.getId() đã có giá trị (ví dụ: 1, 2, 3...)
+        
+        return mapToDTO(savedUser);
+    }
+
+    // Ví dụ 6: Cập nhật user (UPDATE)
+    public UserResponseDTO updateUser(Long id, UpdateUserRequest request) {
+        // Tìm user hiện tại
+        Optional<User> userOpt = userRepository.findById(id);
+        if (!userOpt.isPresent()) {
+            throw new IllegalArgumentException("Không tìm thấy user với ID: " + id);
+        }
+
+        User user = userOpt.get();
+        // Cập nhật thông tin
+        user.setFullName(request.fullName);
+        user.setPhone(request.phone);
+        
+        // save() sẽ tự động UPDATE vì user.getId() đã có giá trị
+        User updatedUser = userRepository.save(user);
+        
+        return mapToDTO(updatedUser);
+    }
+
+    // Ví dụ 7: Xóa user (DELETE)
+    public void deleteUser(Long id) {
+        // Kiểm tra user có tồn tại không
+        if (!userRepository.existsById(id)) {
+            throw new IllegalArgumentException("Không tìm thấy user với ID: " + id);
+        }
+        
+        userRepository.deleteById(id);
+        // Hoặc: userRepository.delete(user) nếu đã có object User
+    }
+
+    private UserResponseDTO mapToDTO(User user) {
+        UserResponseDTO dto = new UserResponseDTO();
+        dto.id = user.getId();
+        dto.email = user.getEmail();
+        dto.fullName = user.getFullName();
+        dto.role = user.getRole();
+        return dto;
+    }
 }
 ```
 
@@ -345,12 +567,37 @@ public interface UserRepository {
 
     // Tự khai báo mà không có implementation
     User save(User user);
+    
+    // Không có method findAll(), findById(), deleteById()...
 }
 ```
 
 **Tại sao sai:**  
 - Interface `UserRepository` không extend `JpaRepository` nên Spring Data JPA **không biết cách tự sinh code**.  
 - Bạn sẽ phải tự viết class implement interface này, tự viết SQL → **mất hết lợi thế** của Spring Data.
+- Khi inject `UserRepository` vào Service, Spring sẽ báo lỗi vì không tìm thấy bean implementation.
+
+**Ví dụ sai khác - Quên xử lý Optional:**
+
+```java
+@Service
+public class UserServiceBad {
+
+    @Autowired
+    private UserRepository userRepository;
+
+    // ❌ Sai: Không kiểm tra Optional, có thể NullPointerException
+    public UserResponseDTO getUserById(Long id) {
+        Optional<User> userOpt = userRepository.findById(id);
+        User user = userOpt.get(); // ❌ Lỗi nếu userOpt.isEmpty()
+        return mapToDTO(user);
+    }
+}
+```
+
+**Tại sao sai:**  
+- Nếu không tìm thấy user với `id` đó, `userOpt.get()` sẽ ném `NoSuchElementException`.  
+- Luôn phải kiểm tra `isPresent()` hoặc dùng `orElse()`, `orElseThrow()` trước khi gọi `get()`.
 
 **Ví dụ trong dự án Taxi - Cách đúng:**
 
@@ -359,10 +606,78 @@ public interface UserRepository {
 public interface BookingRepository extends JpaRepository<Booking, Long> {
 
     // Tìm tất cả booking của một passenger cụ thể
+    // Spring Data JPA tự sinh: SELECT * FROM bookings WHERE passenger_id = ?
     List<Booking> findByPassengerId(Long passengerId);
 
     // Tìm tất cả booking đang ở trạng thái PENDING
+    // Spring Data JPA tự sinh: SELECT * FROM bookings WHERE status = ?
     List<Booking> findByStatus(String status);
+    
+    // Tìm booking theo passenger và status
+    // Spring Data JPA tự sinh: SELECT * FROM bookings WHERE passenger_id = ? AND status = ?
+    List<Booking> findByPassengerIdAndStatus(Long passengerId, String status);
+    
+    // Đếm số booking của một passenger
+    // Spring Data JPA tự sinh: SELECT COUNT(*) FROM bookings WHERE passenger_id = ?
+    long countByPassengerId(Long passengerId);
+}
+```
+
+**Sử dụng trong BookingService:**
+
+```java
+@Service
+public class BookingService {
+
+    @Autowired
+    private BookingRepository bookingRepository;
+
+    // Lấy tất cả booking đang chờ của một passenger
+    public List<BookingResponseDTO> getPendingBookingsForPassenger(Long passengerId) {
+        List<Booking> bookings = bookingRepository.findByPassengerIdAndStatus(
+            passengerId, 
+            "PENDING"
+        );
+        return bookings.stream()
+            .map(this::mapToDTO)
+            .collect(Collectors.toList());
+    }
+
+    // Đếm số booking đã hoàn thành của một passenger
+    public long countCompletedBookings(Long passengerId) {
+        return bookingRepository.countByPassengerId(passengerId);
+    }
+
+    // Tạo booking mới
+    public BookingResponseDTO createBooking(CreateBookingRequest request) {
+        Booking newBooking = new Booking();
+        newBooking.setPickupLocation(request.pickupLocation);
+        newBooking.setDropoffLocation(request.dropoffLocation);
+        newBooking.setStatus("PENDING");
+        newBooking.setPassengerId(request.passengerId);
+        
+        // save() tự động INSERT vì newBooking.getId() == null
+        Booking savedBooking = bookingRepository.save(newBooking);
+        
+        return mapToDTO(savedBooking);
+    }
+
+    // Cập nhật trạng thái booking (ví dụ: tài xế nhận chuyến)
+    public BookingResponseDTO acceptBooking(Long bookingId, Long driverId) {
+        Optional<Booking> bookingOpt = bookingRepository.findById(bookingId);
+        if (!bookingOpt.isPresent()) {
+            throw new IllegalArgumentException("Không tìm thấy booking với ID: " + bookingId);
+        }
+
+        Booking booking = bookingOpt.get();
+        booking.setStatus("ACCEPTED");
+        booking.setDriverId(driverId);
+        
+        // save() tự động UPDATE vì booking.getId() đã có giá trị
+        Booking updatedBooking = bookingRepository.save(booking);
+        
+        return mapToDTO(updatedBooking);
+    }
 }
 ```
 
@@ -374,12 +689,42 @@ public interface BookingRepository extends JpaRepository<Booking, Long> {
 public class BookingRepository {
 
     // Không có code, cũng không extends interface nào
+    // Spring không thể tự sinh CRUD
 }
 ```
 
 **Tại sao sai:**  
 - Đây chỉ là một class rỗng, Spring không thể tự sinh CRUD như `save`, `findAll`…  
 - Bạn sẽ phải tự inject `EntityManager` và viết query tay. Điều này **không phù hợp cho người mới học** và trái với mục tiêu dùng Spring Data JPA để đơn giản hoá CRUD.
+
+**Ví dụ sai khác - Nhầm lẫn giữa INSERT và UPDATE:**
+
+```java
+@Service
+public class BookingServiceBad {
+
+    @Autowired
+    private BookingRepository bookingRepository;
+
+    // ❌ Sai: Tự set id bằng tay, có thể gây lỗi
+    public BookingResponseDTO createBooking(CreateBookingRequest request) {
+        Booking newBooking = new Booking();
+        newBooking.setId(999L); // ❌ Không nên tự set id
+        newBooking.setPickupLocation(request.pickupLocation);
+        
+        // save() sẽ cố UPDATE bản ghi có id = 999, không phải INSERT mới
+        // Nếu id = 999 không tồn tại → có thể lỗi hoặc tạo bản ghi không mong muốn
+        Booking savedBooking = bookingRepository.save(newBooking);
+        
+        return mapToDTO(savedBooking);
+    }
+}
+```
+
+**Tại sao sai:**  
+- Khi bạn tự set `id` cho entity mới, JPA sẽ hiểu là bạn muốn **UPDATE** bản ghi có `id` đó, không phải INSERT mới.  
+- Nếu `id` đó không tồn tại trong database, có thể gây lỗi hoặc tạo dữ liệu không mong muốn.  
+- **Nguyên tắc:** Để `id = null` khi tạo entity mới, để JPA tự động INSERT và MySQL tự sinh `id` qua AUTO_INCREMENT.
 
 ---
 

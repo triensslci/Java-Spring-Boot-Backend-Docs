@@ -232,7 +232,7 @@ Tài liệu này được tạo cho mục đích giáo dục và có thể đư�
 - ✅ **[Buoi5.md](./Buoi5.md)** - Thiết kế CSDL & Kết nối MySQL
 - ✅ **[Buoi6.md](./Buoi6.md)** - Entity Mapping & Basic CRUD
 - ✅ **[Buoi7.md](./Buoi7.md)** - DTO Pattern & Object Mapping
-- ⏳ **[Buoi8.md](./Buoi8.md)** - Validation & Global Exception Handling *(Đang cập nhật)*
+- ✅ **[Buoi8.md](./Buoi8.md)** - Validation & Global Exception Handling
 
 #### Giai đoạn 3: Business Logic & Validation (Buổi 9 - 12)
 - ⏳ **[Buoi9.md](./Buoi9.md)** - JPA Relationships (One-to-Many, Many-to-Many) *(Đang cập nhật)*
