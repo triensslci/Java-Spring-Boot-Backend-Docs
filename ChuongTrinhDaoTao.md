@@ -29,7 +29,7 @@
   - Mở folder project, Terminal tích hợp
   - Command Palette (`Cmd+Shift+P` / `Ctrl+Shift+P`)
   - Run và Debug Spring Boot app từ VS Code
-- **Git cơ bản:** `init`, `add`, `commit`, `push`, `.gitignore`. Cách tạo Pull Request (PR)
+- **Git cơ bản:** `init`, `add`, `commit`, `push`, `.gitignore`, Pull Request. Học viên quan sát sơ đồ luồng Git (`images/git-follow.png`) để ghi nhớ Working Directory → Staging → Local/Remote Repo
 - **Git Branching:** `main` vs `develop`, cách tạo và merge branch (quan trọng cho teamwork và CI/CD)
 
 #### Thực Hành:

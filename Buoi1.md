@@ -28,6 +28,16 @@ Buổi 1 là điểm xuất phát nên chưa có nội dung nào trước đó. 
 - **Server:** Spring Boot Backend (chúng ta sẽ xây dựng)
 - **Database:** MySQL (lưu thông tin user, booking, driver)
 
+**Sơ đồ Client ↔ Server ↔ Database trong dự án Taxi:**
+
+![Luồng Client-Server-Database](images/buoi1/client-server.png)
+
+**Giải thích sơ đồ:**
+- **Client:** Ứng dụng của hành khách gửi HTTP Request dạng JSON, ví dụ `POST /api/bookings`, để yêu cầu đặt xe.
+- **Server:** Spring Boot Backend nhận request, tính giá, tìm tài xế phù hợp và trả HTTP Response chứa kết quả (giá cước, trạng thái).
+- **Database:** MySQL Taxi lưu thông tin User/Booking/Feedback. Server đọc/ghi dữ liệu liên tục để đảm bảo lịch sử chuyến đi không bị mất.
+- Hai mũi tên giữa Client ↔ Server biểu thị JSON qua lại; mũi tên giữa Server ↔ Database biểu thị câu lệnh SQL truy vấn và lưu trữ.
+
 ---
 
 ### 2. Cài đặt môi trường
@@ -206,6 +216,17 @@ dir # Windows
 1. **Working Directory:** Nơi bạn đang viết code
 2. **Staging Area:** Nơi bạn "chuẩn bị" code để lưu
 3. **Repository:** Nơi Git lưu trữ code đã commit
+
+**Sơ đồ tổng quan:** Hình dưới đây mô tả dòng chảy `git add → git commit → git push` và cách `git fetch`, `git pull`, `git checkout` đưa code đi giữa các khu vực. Khi học, hãy mở sơ đồ này trong VS Code (Explorer → `images/buoi1/git-follow.png`) để vừa đọc vừa đối chiếu các lệnh.
+
+![Sơ đồ cách hoạt động của Git](images/buoi1/git-follow.png)
+
+**Giải thích nhanh sơ đồ:**
+- **Working Directory (Thư mục làm việc):** Bạn đang viết code Taxi Booking tại đây. Lệnh `git status` cho biết những file nào vừa sửa, giống như kiểm tra còn món nào chưa rửa trong bếp.
+- **Staging Area (Vùng chờ):** Khi chạy `git add BookingController.java`, bạn nói với Git “món này đã sẵn sàng để chụp ảnh”. Các file trong vùng này sẽ có mặt trong lần commit kế tiếp.
+- **Local Repository (Kho cục bộ):** `git commit -m "..."` chụp lại toàn bộ thay đổi đã stage. Đây là lịch sử nằm ngay trên máy bạn, có thể xem lại bằng `git log`.
+- **Remote Repository (Kho từ xa):** `git push` gửi lịch sử ở máy bạn lên GitHub để cả nhóm taxi-backend thấy được. Nếu đồng đội cập nhật trước, hãy `git fetch` hoặc `git pull` để kéo code mới về rồi tiếp tục làm việc.
+- **git checkout:** Cho phép bạn quay ngược về một commit khác hoặc chuyển sang branch mới, tương tự việc mở một bản nháp khác để thử ý tưởng.
 
 **Ví dụ đơn giản:**
 - Bạn viết code (Working Directory)
