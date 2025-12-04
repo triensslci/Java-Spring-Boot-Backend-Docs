@@ -180,9 +180,40 @@ dir # Windows
 **Cách mở:**
 - `Cmd+Shift+P` (macOS) hoặc `Ctrl+Shift+P` (Windows/Linux)
 
-**Ví dụ sử dụng:**
-- Gõ "Java: Clean Java Language Server Workspace" → Enter (để reset Java extension nếu có lỗi)
-- Gõ "Spring Initializr: Create a Maven Project" → Enter (để tạo Spring Boot project mới)
+**Hướng dẫn chi tiết từng bước:**
+1. Nhấn `Cmd+Shift+P` / `Ctrl+Shift+P` để mở thanh Command Palette ở đầu cửa sổ.
+2. Bắt đầu gõ từ khóa (không cần nhập toàn bộ câu lệnh). Ví dụ gõ `spring init` để thấy lệnh "Spring Initializr: Create a Maven Project".
+3. Dùng phím mũi tên lên/xuống để chọn lệnh phù hợp → Nhấn `Enter` để chạy.
+4. Với những lệnh yêu cầu thêm thông tin, VS Code sẽ hỏi tiếp ngay trong thanh Command Palette (ví dụ chọn loại project, version Java...). Bạn trả lời lần lượt cho đến khi hoàn tất.
+
+**Các nhóm lệnh quan trọng trong dự án Taxi Booking:**
+- `Spring Initializr: Create a Maven Project`: tạo nhanh skeleton `taxi-booking-backend` mà không cần mở trình duyệt.
+- `Java: Clean Java Language Server Workspace`: khắc phục lỗi IntelliSense bị “đơ” do Maven sync.
+- `Tasks: Run Build Task` → chạy `./mvnw clean install` ngay trong VS Code khi cần kiểm tra build.
+- `Terminal: Create New Terminal (with Profile)`: mở terminal mới đã preset sẵn shell bạn yêu thích để chạy `git status`, `./mvnw spring-boot:run`...
+- `Git: Checkout to...`: chuyển branch (ví dụ sang `feature/booking-api`) chỉ bằng cách gõ tên branch.
+
+**Ví dụ thực tế 1 – tạo project mới:**
+1. Mở Command Palette → gõ `Spring Initializr`.
+2. Chọn "Spring Initializr: Create a Maven Project".
+3. Chọn `Java 17`, groupId `com.taxi`, artifactId `taxi-booking-backend`.
+4. Đến bước **Dependencies**, gõ lần lượt để thêm:
+   - `Spring Web` (REST API)
+   - `Validation` (kiểm tra dữ liệu đầu vào)
+   - `Spring Data JPA` + `MySQL Driver` (làm việc với DB Taxi Booking)
+   - (tùy chọn) `Spring Boot DevTools` để auto reload
+   VS Code sẽ hiển thị danh sách gợi ý; mỗi lần Enter là thêm một dependency. Nếu lỡ chọn sai, nhấn `Backspace` để xóa khỏi danh sách trước khi xác nhận.
+5. Hoàn tất wizard, VS Code tự tạo project và hỏi bạn có muốn mở folder mới hay không → chọn `Open`. Ở panel Maven bạn sẽ thấy các dependency vừa chọn, bảo đảm dự án đã sẵn sàng cho luồng Taxi Booking.
+
+**Ví dụ thực tế 2 – reset khi IntelliSense lỗi:**
+1. Khi VS Code không gợi ý code hoặc highlight đỏ, nhấn `Cmd+Shift+P`.
+2. Gõ `Java: Clean Java Language Server Workspace`.
+3. Chấp nhận reload VS Code. Sau khi mở lại, gõ `BookingController` sẽ có gợi ý trở lại.
+
+**Mẹo nhỏ:**
+- Gõ dấu `>` ngay sau khi mở Command Palette để xem “Recent Commands” và chạy lại các lệnh đã dùng gần đây (rất tiện khi bạn phải tạo nhiều project demo).
+- Gõ `?` để xem danh sách hướng dẫn bàn phím và phím tắt liên quan.
+- Nếu dùng nhiều lệnh giống nhau, hãy ghim (pin) vào “Favorites”: mở Command Palette → gõ lệnh → click icon ghim ở bên phải. Lần sau chỉ cần gõ tên viết tắt là thấy ngay.
 
 ---
 
