@@ -634,13 +634,13 @@ Hãy tưởng tượng bạn đang nấu ăn:
 
 **Không có DI (cách cũ - phải tự tạo tất cả):**
 ```java
-public class BookingService {
-    // Bạn phải tự tạo đối tượng UserRepository
-    // Giống như tự đi mua nguyên liệu
+public class UserService {
+    // Bạn phải tự tạo toàn bộ UserRepository (không có Spring DI)
+    // Giống như phải tự mua nguyên liệu, tự nấu
     private UserRepository userRepository = new UserRepository();
     
-    public void createBooking() {
-        // Sử dụng userRepository
+    public void createUser(User user) {
+        // Tự khởi tạo và tự lưu User (không có Spring DI hỗ trợ)
         userRepository.save(user);
     }
 }
@@ -649,14 +649,14 @@ public class BookingService {
 **Có DI (Spring - Spring tự động tạo và đưa cho bạn):**
 ```java
 @Service
-public class BookingService {
+public class UserService {
     // Bạn chỉ cần "yêu cầu" UserRepository
     // Spring sẽ tự động tạo và gán vào biến này
     // Giống như chỉ cần nói "Tôi cần UserRepository", Spring sẽ tự động mang đến
     @Autowired
     private UserRepository userRepository;
     
-    public void createBooking() {
+    public void createUser(User user) {
         // Sử dụng userRepository (đã được Spring tự động gán vào)
         userRepository.save(user);
     }
@@ -665,7 +665,7 @@ public class BookingService {
 
 **Giải thích chi tiết:**
 
-- **Dependency (Phụ thuộc):** Là những đối tượng mà class này cần để hoạt động. Ví dụ: `BookingService` cần `UserRepository` để lưu dữ liệu → `UserRepository` là dependency của `BookingService`
+- **Dependency (Phụ thuộc):** Là những đối tượng mà class này cần để hoạt động. Ví dụ: `UserService` cần `UserRepository` ở cả hai trường hợp (không DI và có DI) → `UserRepository` là dependency của `UserService`.
 - **Injection (Cung cấp/Tự động đưa vào):** Là việc Spring tự động tạo đối tượng và gán vào biến cho bạn, thay vì bạn phải tự tạo
 
 **Tại sao dùng DI?**
@@ -816,7 +816,7 @@ public class BookingService {
 @Service
 public class BookingService {
     @Autowired
-    private UserRepository userRepository;  // Inject Repository
+    private BookingRepository bookingRepository;  // Đúng repository cho Booking
     
     public Booking createBooking(BookingRequest request) {
         // Business logic: Xử lý đặt xe
@@ -834,8 +834,8 @@ public class BookingService {
         booking.setPrice(price);
         booking.setStatus("PENDING");
         
-        // 4. Lưu vào database
-        return userRepository.save(booking);
+        // 4. Lưu vào database (đúng kiểu entity)
+        return bookingRepository.save(booking);
     }
     
     private int calculatePrice(double distance) {
@@ -1873,7 +1873,7 @@ public class BookingService {
     @Autowired
     private EmailService emailService;
     
-    public void createBooking() {
+    public void createBooking(User user) {
         // Có thể dùng userRepository ngay
         userRepository.save(user);
         emailService.sendEmail("user@example.com", "Booking created");
